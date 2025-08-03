@@ -204,6 +204,14 @@ export const removeImageObject = async (req, res) => {
 
     await sql`insert into creations (user_id,prompt,content,type) values(${userId},${`Removed ${object} from image`},${imageUrl},'image')`;
 
+    try {
+      fs.unlinkSync(path);
+      console.log("File successfully deleted");
+    } catch (error) {
+      console.log(error);
+    }
+
+
     res.json({ success: true, content: imageUrl });
   } catch (error) {
     console.log(error.message);
@@ -244,6 +252,14 @@ export const resumeReview = async (req, res) => {
     const content = response.choices[0].message.content;
 
     await sql`insert into creations (user_id,prompt,content,type) values(${userId},'Review the uploaded resume',${content},'resume-review')`;
+
+    try {
+      fs.unlinkSync(resume.path);
+      console.log("File successfully deleted");
+    } catch (error) {
+      console.log(error);
+    }
+
 
     res.json({ success: true, content });
   } catch (error) {
