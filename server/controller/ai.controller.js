@@ -227,7 +227,7 @@ export const resumeReview = async (req, res) => {
 
     const resume = req.file;
 
-    console.log("resume data : ",resume)
+    // console.log("resume data : ",resume)
 
     if (resume.size > 5 * 1024 * 1024) {
       return res.json({
