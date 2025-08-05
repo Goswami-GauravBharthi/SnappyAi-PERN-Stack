@@ -5,6 +5,8 @@ import { v2 as cloudinary } from "cloudinary";
 import axios from "axios";
 import fs from "fs";
 import pdf from "pdf-parse/lib/pdf-parse.js";
+import util from "util"
+const unlinkFile = util.promisify(fs.unlink);
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -225,6 +227,8 @@ export const resumeReview = async (req, res) => {
 
     const resume = req.file;
 
+    console.log("resume data : ",resume)
+
     if (resume.size > 5 * 1024 * 1024) {
       return res.json({
         success: false,
@@ -253,12 +257,7 @@ export const resumeReview = async (req, res) => {
 
     await sql`insert into creations (user_id,prompt,content,type) values(${userId},'Review the uploaded resume',${content},'resume-review')`;
 
-    try {
-      fs.unlinkSync(resume.path);
-      console.log("File successfully deleted");
-    } catch (error) {
-      console.log(error);
-    }
+     await unlinkFile(resume.path);
 
 
     res.json({ success: true, content });
